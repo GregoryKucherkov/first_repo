@@ -109,7 +109,8 @@ class AddressBook(UserDict):
         
     def get_birthdays_per_week(self):
         today = datetime.today().date()
-        
+        birthdays_per_day = {}
+
         week = ('Monday',
         'Tuesday',
         'Wednesday',
@@ -119,40 +120,28 @@ class AddressBook(UserDict):
         'Sunday' 
         )
 
-        birthdays_per_day = {day: [] for day in week}
-
         for record in self.data.values():
             if record.birthday:
-                name = record.name.value
-                print(f"name--->>>{name}")
-                birthday = record.birthday
-                print(f"birthday-->>>{birthday}")
-                birthday = datetime.strptime(record.birthday, "%d-%m-%Y").date() # date type conversion
-            
+                birthday = record.birthday.date()  # date type conversion
                 birthday_this_year = birthday.replace(year=today.year) 
          
                 delta_days = (birthday_this_year - today).days
 
                 if delta_days <= 7:
                     day = week[birthday.weekday()]
-
-                    if birthday.weekday() >= 5: 
-                        birthdays_per_day['Monday'].append(name)
-                    else:
-                        birthdays_per_day[day].append(name)    
+                if birthday.weekday() >= 5: 
+                    birthdays_per_day['Monday'].append(name)
+                else:
+                    birthdays_per_day[day].append(name)    
             
-                elif birthday_this_year < today:
-                    birthday_this_year = birthday.replace(year=today.year + 1)
+            elif birthday_this_year < today:
+                birthday_this_year = birthday.replace(year=today.year + 1)
 
-                if birthday.weekday() == 5 or birthday.weekday() == 6:
-                    pass
-            else:
-                print(f"There is no Birthday for such contact.")
+            if birthday.weekday() == 5 or birthday.weekday() == 6:
+                pass
 
-        
         for day, names in birthdays_per_day.items():
-            
-            print(f"{day}: {', '.join(str(names))}") 
+            print(f"{day}: {', '.join(names)}")
     
 
     
